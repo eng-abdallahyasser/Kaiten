@@ -3,28 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Helpers/pose _contour_overlay.dart';
 import '../controllers/full_monitoring_controller.dart';
+import '../widgets/monitoring_info_box.dart';
+import '../widgets/record_action_button.dart';
+import '../widgets/warning_banner.dart';
 
+/// The main entry point for the real-time monitoring feature.
+/// This screen provides a live camera feed with an overlay of detected poses
+/// and alerts the user to posture issues based on the active detection logic.
 class CameraScreen extends GetView<FullMonitoringController> {
-  const CameraScreen({Key? key}) : super(key: key);
+  const CameraScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      // Show loading screen while camera or controller is initializing
       if (controller.isInitializing.value ||
           controller.cameraController.value == null ||
           !controller.cameraController.value!.value.isInitialized) {
-        return const Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Initializing Camera...'),
-              ],
-            ),
-          ),
-        );
+        return _buildLoadingScreen();
       }
 
       return Scaffold(
@@ -38,147 +34,77 @@ class CameraScreen extends GetView<FullMonitoringController> {
             Expanded(
               child: Stack(
                 children: [
-                  // Camera Preview
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      controller.displayWidth = constraints.maxWidth;
-                      controller.displayHeight = constraints.maxHeight;
-                      controller.updateCameraLayout();
-                      return CameraPreview(controller.cameraController.value!);
-                    },
-                  ),
+                  // Full-screen camera preview layer
+                  _buildCameraPreview(),
 
-                  // Pose & Contour Overlay
-                  Positioned(
-                    left: controller.offsetX,
-                    top: controller.offsetY,
-                    width: controller.actualCameraWidth,
-                    height: controller.actualCameraHeight,
-                    child: Obx(() => PoseContourOverlay(
-                      poses: controller.poses,
-                      contour: controller.contour,
-                      corners: controller.corners,
-                      cameraController: controller.cameraController.value!,
-                      sensorOrientation: controller.sensorOrientation,
-                      displayWidth: controller.actualCameraWidth,
-                      displayHeight: controller.actualCameraHeight,
-                      yAdjustment: controller.yAdjustment,
-                      cameraImageWidth: controller.cameraImageWidth,
-                      cameraImageHeight: controller.cameraImageHeight,
-                    )),
-                  ),
+                  // AI detection overlays (poses, contours, and corners)
+                  _buildDetectionOverlay(),
 
-                  // Warning Banner
-                  Positioned(
-                    top: 50,
-                    left: 20,
-                    right: 20,
-                    child: ValueListenableBuilder<String>(
-                      valueListenable: controller.warningText,
-                      builder: (context, warning, child) {
-                        if (warning.isEmpty) return const SizedBox.shrink();
+                  // Posture warning notification banner
+                  const WarningBanner(),
 
-                        return Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.warning_amber_rounded,
-                                color: Colors.white,
-                                size: 32,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  warning,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  // Info Box
-                  Positioned(
-                    bottom: 50,
-                    left: 20,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Obx(() => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '👤 Poses: ${controller.poses.length}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '📍 Contours: ${controller.contour.length}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '🔊 Alarm: ${controller.isAlarmPlaying.value ? "Playing" : "Silent"}',
-                            style: TextStyle(
-                              color: controller.isAlarmPlaying.value ? Colors.red : Colors.green,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '📹 Stream: ${controller.isStreamActive.value ? "Active" : "Stopped"}',
-                            style: TextStyle(
-                              color: controller.isStreamActive.value ? Colors.green : Colors.orange,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      )),
-                    ),
-                  ),
+                  // Session status and metadata box
+                  const MonitoringInfoBox(),
                 ],
               ),
             ),
           ],
         ),
-        floatingActionButton: Obx(() => FloatingActionButton.extended(
-          onPressed: controller.startRecordingAndSend,
-          icon: Icon(controller.isRecording.value ? Icons.stop : Icons.camera_alt),
-          label: Text(controller.isRecording.value ? 'Processing...' : 'Detect Area'),
-          backgroundColor: controller.isRecording.value ? Colors.red : Colors.deepPurple,
-        )),
+        // Primary action button to trigger recording and area analysis
+        floatingActionButton: const RecordActionButton(),
       );
     });
+  }
+
+  /// Displays a simple loading state while subsystems prepare.
+  Widget _buildLoadingScreen() {
+    return const Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Initializing Camera...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Calculates the camera layout and renders the preview frame.
+  Widget _buildCameraPreview() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Sync display dimensions to the controller for accurate coordinate mapping
+        controller.displayWidth = constraints.maxWidth;
+        controller.displayHeight = constraints.maxHeight;
+        controller.updateCameraLayout();
+        
+        return CameraPreview(controller.cameraController.value!);
+      },
+    );
+  }
+
+  /// Renders a transparent overlay that draws pose landmarks and detected areas.
+  Widget _buildDetectionOverlay() {
+    return Positioned(
+      left: controller.offsetX,
+      top: controller.offsetY,
+      width: controller.actualCameraWidth,
+      height: controller.actualCameraHeight,
+      child: Obx(() => PoseContourOverlay(
+        poses: controller.poses,
+        contour: controller.contour,
+        corners: controller.corners,
+        cameraController: controller.cameraController.value!,
+        sensorOrientation: controller.sensorOrientation,
+        displayWidth: controller.actualCameraWidth,
+        displayHeight: controller.actualCameraHeight,
+        yAdjustment: controller.yAdjustment,
+        cameraImageWidth: controller.cameraImageWidth,
+        cameraImageHeight: controller.cameraImageHeight,
+      )),
+    );
   }
 }
