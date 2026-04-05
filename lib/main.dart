@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kaiten/home/views/home_screen.dart';
-import 'package:kaiten/full_monitoring/screens/fullmonitoring_screen.dart';
-import 'package:kaiten/full_monitoring/bindings/full_monitoring_binding.dart';
+import 'package:kaiten/app_pages.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,18 +14,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Kaiten',
-      initialRoute: '/',
-      getPages: [
-        GetPage(
-          name: '/',
-          page: () => const HomeScreen(),
-        ),
-        GetPage(
-          name: '/full_monitoring',
-          page: () => const CameraScreen(),
-          binding: FullMonitoringBinding(),
-        ),
-      ],
+      initialRoute: AppPages.initial,
+      getPages: AppPages.routes,
     );
   }
 }

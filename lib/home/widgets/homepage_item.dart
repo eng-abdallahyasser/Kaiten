@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 class HomePageItem extends StatelessWidget {
-  final  String image;
-  final  String text;
+  final String image;
+  final String text;
+  final VoidCallback? onTap;
+
   const HomePageItem({
-    super.key,required this.image ,required this.text
+    super.key,
+    required this.image,
+    required this.text,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed('/full_monitoring'),
+      onTap: onTap,
       child: Stack(
         children: [Padding(padding: EdgeInsets.symmetric(horizontal: 35),
           child: Container(

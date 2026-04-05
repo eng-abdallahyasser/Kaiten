@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kaiten/home/widgets/homeboard.dart';
+import '../controllers/home_controller.dart';
 import '../widgets/homepage_item.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends GetView<HomeController> {
 
 
   const HomeScreen({super.key});
@@ -55,17 +57,21 @@ class HomeScreen extends StatelessWidget {
                         HomePageItem(
                           image: "assets/images/baby.png",
                           text: "Pose Estimation",
+                          onTap: () => controller.goToPoseEstimation(),
                         ),
                         SizedBox(height: 12),
                         HomePageItem(
                           image: "assets/images/monitoring.png",
                           text: "Full Monitoring",
+                          onTap: () => controller.goToFullMonitoring(),
                         ),
                         SizedBox(height: 12),
                         HomePageItem(
                           image: "assets/images/menu-selection.png",
                           text: "Food Guide",
-                        ),SizedBox(
+                          onTap: () => controller.goToFoodGuide(),
+                        ),
+                        SizedBox(
                           height: 10,
                         )
                         , Padding(padding: EdgeInsets.symmetric(horizontal: 0),
@@ -89,10 +95,10 @@ class HomeScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  IconButton(onPressed: (){}, icon:Icon(Icons.home,size:40 ,color:Colors.white ,) ),
-                                  IconButton(onPressed: (){}, icon: Icon(Icons.history,size: 40,color:Colors.white ,)),
-                                  IconButton(onPressed: (){}, icon: Icon(Icons.person,size: 40,color:Colors.white ,),),
-                                  IconButton(onPressed: (){}, icon: Icon(Icons.settings,size: 40,color:Colors.white ,))
+                                  IconButton(onPressed: () => controller.onBottomNavItemTapped(0), icon:Icon(Icons.home,size:40 ,color:Colors.white ,) ),
+                                  IconButton(onPressed: () => controller.onBottomNavItemTapped(1), icon: Icon(Icons.history,size: 40,color:Colors.white ,)),
+                                  IconButton(onPressed: () => controller.onBottomNavItemTapped(2), icon: Icon(Icons.person,size: 40,color:Colors.white ,),),
+                                  IconButton(onPressed: () => controller.onBottomNavItemTapped(3), icon: Icon(Icons.settings,size: 40,color:Colors.white ,))
                               
                                 ],
                               ),
