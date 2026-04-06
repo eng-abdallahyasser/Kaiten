@@ -4,7 +4,8 @@ import 'package:kaiten/home/bindings/home_binding.dart';
 import 'package:kaiten/home/views/home_screen.dart';
 import 'package:kaiten/full_monitoring/screens/fullmonitoring_screen.dart';
 import 'package:kaiten/full_monitoring/bindings/full_monitoring_binding.dart';
-import 'package:kaiten/pose_estimation/views/image_uploadview.dart';
+import 'package:kaiten/pose_estimation/bindings/pose_estimation_binding.dart';
+import 'package:kaiten/pose_estimation/views/pose_estimation_view.dart';
 
 class AppPages {
   static const initial = AppRoutes.home;
@@ -18,7 +19,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.poseEstimation,
-      page: () => const ImageUploadingview(),
+      page: () => const PoseEstimationView(),
+      binding: PoseEstimationBinding(),
       transition: Transition.fade,
     ),
     GetPage(

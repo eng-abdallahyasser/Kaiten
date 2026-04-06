@@ -55,7 +55,7 @@ class HomePageItem extends StatelessWidget {
 
          Positioned( top: 10,
               left: 70
-              ,child: CircleAvatar(radius:40,backgroundColor:Colors.white ,backgroundImage: AssetImage(image),)
+              ,child: Image.asset(image,height: 80,width: 80,)
           ),
           Positioned(
             top:40,
