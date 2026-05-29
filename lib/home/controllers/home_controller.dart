@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
 
 class HomeController extends GetxController {
+  // Observable selected index for the bottom navigation bar
+  var selectedIndex = 0.obs;
+
   // Navigation Methods
   void goToPoseEstimation() {
     Get.toNamed('/pose_estimation');
@@ -11,16 +14,10 @@ class HomeController extends GetxController {
   }
 
   void goToFoodGuide() {
-    // Placeholder for now
-    Get.snackbar(
-      "Coming Soon", 
-      "The Food Guide feature is currently under development.",
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    selectedIndex.value = 2;
   }
 
   void onBottomNavItemTapped(int index) {
-    // Handle bottom navigation if needed in the future
-    print("Bottom nav item $index tapped");
+    selectedIndex.value = index;
   }
 }
