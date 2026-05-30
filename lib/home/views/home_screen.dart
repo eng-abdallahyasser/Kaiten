@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kaiten/contants/colors.dart';
 import 'package:kaiten/guide/views/guide_screen.dart';
 import 'package:kaiten/settings/views/settings_screen.dart';
+import 'package:kaiten/profile/views/profile_screen.dart';
 import '../controllers/home_controller.dart';
 
 class HomeScreen extends GetView<HomeController> {
@@ -70,9 +71,13 @@ class HomeScreen extends GetView<HomeController> {
                 // ----------------------------------------------------
                 Positioned.fill(
                   child: Obx(() {
-                    if (controller.selectedIndex.value == 2) {
+                    if (controller.selectedIndex.value == 1) {
                       return const GuideScreen();
                     }
+                    if (controller.selectedIndex.value == 2) {
+                      return const ProfileScreen();
+                    }
+
                     if (controller.selectedIndex.value == 3) {
                       return const SettingsScreen();
                     }
@@ -85,7 +90,7 @@ class HomeScreen extends GetView<HomeController> {
                           const SizedBox(height: 20),
                           // 1. Header Section
                           _buildHeader(),
-                          
+
                           const SizedBox(height: 40),
                           // 2. Hero Section
                           _buildHero(),
@@ -179,10 +184,7 @@ class HomeScreen extends GetView<HomeController> {
             height: 40,
             decoration: BoxDecoration(
               color: Colors.white,
-              border: Border.all(
-                color: const Color(0XFFC0C8C8),
-                width: 1.0,
-              ),
+              border: Border.all(color: const Color(0XFFC0C8C8), width: 1.0),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
@@ -312,10 +314,7 @@ class HomeScreen extends GetView<HomeController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(48),
-        border: Border.all(
-          color: const Color(0XFFE4E3D7),
-          width: 1.0,
-        ),
+        border: Border.all(color: const Color(0XFFE4E3D7), width: 1.0),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -341,11 +340,7 @@ class HomeScreen extends GetView<HomeController> {
                     color: backgroundColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    color: iconColor,
-                    size: 24,
-                  ),
+                  child: Icon(icon, color: iconColor, size: 24),
                 ),
                 const SizedBox(width: 16),
                 // Title
@@ -398,9 +393,9 @@ class HomeScreen extends GetView<HomeController> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(0, Icons.grid_view_rounded, "Dashboard"),
-          _buildNavItem(1, Icons.history_rounded, "Logs"),
-          _buildNavItem(2, Icons.child_care_rounded, "Care"),
-          _buildNavItem(3, Icons.person_rounded, "Profile"),
+          _buildNavItem(1, Icons.menu_book, "Guide"),
+          _buildNavItem(2, Icons.person_rounded, "Profile"),
+          _buildNavItem(3, Icons.settings_rounded, "Settings"),
         ],
       ),
     );
@@ -427,7 +422,7 @@ class HomeScreen extends GetView<HomeController> {
               Icon(
                 iconData,
                 color: isActive ? myColors.tealSecondary : myColors.textMuted,
-                size: isActive ? 18 : 20,
+                size: isActive ? 24 : 24,
               ),
               if (isActive) ...[
                 const SizedBox(width: 8),

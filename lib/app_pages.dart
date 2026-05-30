@@ -6,6 +6,8 @@ import 'package:kaiten/full_monitoring/screens/fullmonitoring_screen.dart';
 import 'package:kaiten/full_monitoring/bindings/full_monitoring_binding.dart';
 import 'package:kaiten/pose_estimation/bindings/pose_estimation_binding.dart';
 import 'package:kaiten/pose_estimation/views/pose_estimation_view.dart';
+import 'package:kaiten/ai_assistant/views/ai_assistant_screen.dart';
+import 'package:kaiten/ai_assistant/bindings/ai_assistant_binding.dart';
 
 class AppPages {
   static const initial = AppRoutes.home;
@@ -28,6 +30,12 @@ class AppPages {
       page: () => const CameraScreen(),
       binding: FullMonitoringBinding(),
       transition: Transition.fade,
+    ),
+    GetPage(
+      name: AppRoutes.aiAssistant,
+      page: () => const AIAssistantScreen(),
+      binding: AIAssistantBinding(),
+      transition: Transition.rightToLeftWithFade,
     ),
   ];
 }

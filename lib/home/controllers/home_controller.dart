@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:kaiten/app_routes.dart';
 
 class HomeController extends GetxController {
   // Observable selected index for the bottom navigation bar
@@ -6,15 +7,15 @@ class HomeController extends GetxController {
 
   // Navigation Methods
   void goToPoseEstimation() {
-    Get.toNamed('/pose_estimation');
+    Get.toNamed(AppRoutes.poseEstimation);
   }
 
   void goToFullMonitoring() {
-    Get.toNamed('/full_monitoring');
+    Get.toNamed(AppRoutes.fullMonitoring);
   }
 
   void goToFoodGuide() {
-    selectedIndex.value = 2;
+    Get.toNamed(AppRoutes.aiAssistant);
   }
 
   void onBottomNavItemTapped(int index) {
