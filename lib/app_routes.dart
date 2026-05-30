@@ -5,4 +5,5 @@ abstract class AppRoutes {
   static const String fullMonitoring = '/full_monitoring';
   static const String foodGuide = '/food_guide';
   static const String aiAssistant = '/ai_assistant';
+  static const String cerebralPalsy = '/cerebral_palsy';
 }

@@ -5,6 +5,9 @@ class HomeController extends GetxController {
   // Observable selected index for the bottom navigation bar
   var selectedIndex = 0.obs;
 
+  // Observable baby age for settings screen
+  var babyAge = "6 Months".obs;
+
   // Navigation Methods
   void goToPoseEstimation() {
     Get.toNamed(AppRoutes.poseEstimation);
@@ -16,6 +19,10 @@ class HomeController extends GetxController {
 
   void goToFoodGuide() {
     Get.toNamed(AppRoutes.aiAssistant);
+  }
+
+  void goToCerebralPalsy() {
+    Get.toNamed(AppRoutes.cerebralPalsy);
   }
 
   void onBottomNavItemTapped(int index) {

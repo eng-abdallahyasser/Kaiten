@@ -197,8 +197,131 @@ class SettingsScreen extends GetView<HomeController> {
             iconColor: const Color(0XFF525A92),
             onTap: () {},
           ),
+          _buildDivider(),
+          Obx(() => _buildSettingsItem(
+            title: "Baby's Age",
+            subtitle: "Currently set to: ${controller.babyAge.value}",
+            icon: Icons.cake_outlined,
+            iconBgColor: const Color(0X33B8C0FF),
+            iconColor: const Color(0XFF525A92),
+            onTap: () => _showAgePickerBottomSheet(Get.context!),
+          )),
         ],
       ),
+    );
+  }
+
+  // ------------------------------------------------------------------
+  // AGE PICKER BOTTOM SHEET SELECTOR
+  // ------------------------------------------------------------------
+  void _showAgePickerBottomSheet(BuildContext context) {
+    // Generate list of age options: 1 to 11 months, then 1 to 7 years
+    final List<String> ageOptions = [
+      for (int i = 1; i <= 11; i++) "$i ${i == 1 ? 'Month' : 'Months'}",
+      for (int i = 1; i <= 7; i++) "$i ${i == 1 ? 'Year' : 'Years'}",
+    ];
+
+    Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: myColors.bgCream,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          ),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 48,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: const Color(0XFFE4E3D7),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Select Baby's Age",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.quicksand(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: myColors.textDark,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Age range: 1 Month to 7 Years",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.beVietnamPro(
+                fontSize: 12,
+                color: myColors.textMuted,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.45,
+              ),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: ageOptions.length,
+                itemBuilder: (context, index) {
+                  final age = ageOptions[index];
+                  return Obx(() {
+                    final isSelected = controller.babyAge.value == age;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Material(
+                        color: isSelected ? myColors.tealPrimary : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () {
+                            controller.babyAge.value = age;
+                            Get.back();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  age,
+                                  style: GoogleFonts.beVietnamPro(
+                                    fontSize: 15,
+                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                    color: isSelected ? Colors.white : myColors.textDark,
+                                  ),
+                                ),
+                                if (isSelected)
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
     );
   }
 

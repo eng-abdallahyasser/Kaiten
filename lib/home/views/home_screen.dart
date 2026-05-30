@@ -273,6 +273,14 @@ class HomeScreen extends GetView<HomeController> {
           Column(
             children: [
               _buildMenuCard(
+                title: "Cerebral Palsy",
+                backgroundColor: const Color(0XFFFFCCD5),
+                iconColor: const Color(0XFFC9184A),
+                icon: Icons.psychology_rounded,
+                onTap: () => controller.goToCerebralPalsy(),
+              ),
+              const SizedBox(height: 16),
+              _buildMenuCard(
                 title: "Pose Estimation",
                 backgroundColor: myColors.tealAccent,
                 iconColor: myColors.tealSecondary,

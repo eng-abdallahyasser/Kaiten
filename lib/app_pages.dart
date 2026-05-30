@@ -8,6 +8,8 @@ import 'package:kaiten/pose_estimation/bindings/pose_estimation_binding.dart';
 import 'package:kaiten/pose_estimation/views/pose_estimation_view.dart';
 import 'package:kaiten/ai_assistant/views/ai_assistant_screen.dart';
 import 'package:kaiten/ai_assistant/bindings/ai_assistant_binding.dart';
+import 'package:kaiten/cerebral_palsy/bindings/cerebral_palsy_binding.dart';
+import 'package:kaiten/cerebral_palsy/views/cerebral_palsy_view.dart';
 
 class AppPages {
   static const initial = AppRoutes.home;
@@ -35,6 +37,12 @@ class AppPages {
       name: AppRoutes.aiAssistant,
       page: () => const AIAssistantScreen(),
       binding: AIAssistantBinding(),
+      transition: Transition.rightToLeftWithFade,
+    ),
+    GetPage(
+      name: AppRoutes.cerebralPalsy,
+      page: () => const CerebralPalsyView(),
+      binding: CerebralPalsyBinding(),
       transition: Transition.rightToLeftWithFade,
     ),
   ];
