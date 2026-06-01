@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:kaiten/contants/colors.dart';
 import '../controllers/ai_assistant_controller.dart';
 
@@ -15,7 +16,10 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: myColors.textDark),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: myColors.textDark,
+          ),
           onPressed: () => Get.back(),
         ),
         title: Row(
@@ -59,10 +63,7 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: const Color(0XFFEFEEE3),
-            height: 1.0,
-          ),
+          child: Container(color: const Color(0XFFEFEEE3), height: 1.0),
         ),
       ),
       body: SafeArea(
@@ -141,7 +142,12 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
 
             // Input Bar
             Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 4),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                bottom: 20,
+                top: 4,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -186,7 +192,9 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => controller.sendMessage(controller.messageController.text),
+                    onTap: () => controller.sendMessage(
+                      controller.messageController.text,
+                    ),
                     child: Container(
                       width: 56,
                       height: 56,
@@ -215,7 +223,9 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isUser) ...[
@@ -249,21 +259,94 @@ class AIAssistantScreen extends GetView<AIAssistantController> {
                     ? null
                     : [
                         BoxShadow(
-                          color: const Color(0XFF356668).withValues(alpha: 0.03),
+                          color: const Color(
+                            0XFF356668,
+                          ).withValues(alpha: 0.03),
                           offset: const Offset(0, 4),
                           blurRadius: 10,
                         ),
                       ],
               ),
-              child: Text(
-                message.text,
-                style: GoogleFonts.beVietnamPro(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  height: 1.45,
-                  color: isUser ? Colors.white : myColors.textDark,
-                ),
-              ),
+              child: isUser
+                  ? Text(
+                      message.text,
+                      style: GoogleFonts.beVietnamPro(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        height: 1.45,
+                        color: isUser ? Colors.white : myColors.textDark,
+                      ),
+                    )
+                  : MarkdownBody(
+                      data: message.text,
+                      selectable: true,
+                      styleSheet: MarkdownStyleSheet(
+                        horizontalRuleDecoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                              color: myColors.limeAccent,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        p: GoogleFonts.beVietnamPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          height: 1.45,
+                          color: myColors.textDark,
+                        ),
+                        h1: GoogleFonts.beVietnamPro(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: myColors.textDark,
+                        ),
+                        h2: GoogleFonts.beVietnamPro(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: myColors.textDark,
+                        ),
+                        h3: GoogleFonts.beVietnamPro(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: myColors.textDark,
+                        ),
+                        strong: GoogleFonts.beVietnamPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: myColors.textDark,
+                        ),
+                        em: GoogleFonts.beVietnamPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.italic,
+                          color: myColors.textDark,
+                        ),
+                        code: GoogleFonts.jetBrainsMono(
+                          fontSize: 13,
+                          backgroundColor: const Color(0XFFF0F0F0),
+                          color: const Color(0XFF333333),
+                        ),
+                        codeblockDecoration: BoxDecoration(
+                          color: const Color(0XFFF5F4E8),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        blockquote: GoogleFonts.beVietnamPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: myColors.tealSecondary,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        blockquoteDecoration: BoxDecoration(
+                          color: myColors.limeAccent.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        listBullet: GoogleFonts.beVietnamPro(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          color: myColors.textDark,
+                        ),
+                      ),
+                    ),
             ),
           ),
           if (isUser) ...[
