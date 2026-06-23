@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,9 @@ class FullMonitoringController extends GetxController {
 
   late PoseDetector _poseDetector;
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final ContourService _contourService = ContourService(baseUrl: "https://4e45a8ac949f.ngrok-free.app");
+  final ContourService _contourService = ContourService(
+    baseUrl:
+        "https://deployv1-guh6g3d9fxejb3gd.italynorth-01.azurewebsites.net");
   late PostureMonitor _postureMonitor;
 
   int? sensorOrientation;
@@ -51,6 +52,20 @@ class FullMonitoringController extends GetxController {
     _initializePostureMonitor();
     _setupAudioPlayer();
     _initializeCamera();
+    _checkApiHealth();
+  }
+
+  /// Polls the API health endpoint to verify the model is loaded and ready.
+  Future<void> _checkApiHealth() async {
+    debugPrint('Checking API health...');
+    final health = await _contourService.checkHealth();
+    if (health != null && health['model_loaded'] == true) {
+      debugPrint('✅ API model is loaded and ready');
+    } else {
+      debugPrint('⚠️ API not ready yet, will retry...');
+      // Retry after 5 seconds if model isn't loaded
+      Future.delayed(const Duration(seconds: 5), _checkApiHealth);
+    }
   }
 
   void _initializePoseDetector() {
@@ -279,14 +294,10 @@ class FullMonitoringController extends GetxController {
 
       updateCameraLayout();
 
-      final response = await _contourService.sendVideoWithOrientation(
-        videoFile,
-        (sensorOrientation ?? 0),
-        previewWidth: actualCameraWidth,
-        previewHeight: actualCameraHeight,
-      );
+      final response = await _contourService.sendVideo(videoFile);
 
       if (response != null) {
+        // Parse contour using normalized coordinates from the API
         final rawContour = _contourService.parseContour(
           response['contour'],
           actualCameraWidth,
@@ -297,7 +308,16 @@ class FullMonitoringController extends GetxController {
           return Offset(point.dx, point.dy - yAdjustment);
         }).toList());
 
-        corners.assignAll([]);
+        // Parse corners as well (the new API returns these)
+        final rawCorners = _contourService.parseCorners(
+          response['corners'],
+          actualCameraWidth,
+          actualCameraHeight,
+        );
+
+        corners.assignAll(rawCorners.map((point) {
+          return Offset(point.dx, point.dy - yAdjustment);
+        }).toList());
       }
     } catch (e) {
       debugPrint("❌ Recording or upload failed: $e");
